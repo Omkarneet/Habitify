@@ -1,3 +1,5 @@
+let avatar = localStorage.getItem("avatar") || 
+"assets/avatars/hero.svg";
 let level = Number(localStorage.getItem("level")) || 1;
 let xp = Number(localStorage.getItem("xp")) || 0;
 let gold = Number(localStorage.getItem("gold")) || 0;
@@ -19,7 +21,7 @@ function saveGame() {
   localStorage.setItem("inventory", JSON.stringify(inventory));
 }
 
-function updateUI() {
+function document.getElementById("avatar").src = avatar; {
   document.getElementById("level").innerText = level;
   document.getElementById("gold").innerText = gold;
 
@@ -36,7 +38,15 @@ function updateUI() {
 
   loadInventory();
 
-  saveGame();
+  function saveGame() {
+
+localStorage.setItem("level", level);
+localStorage.setItem("xp", xp);
+localStorage.setItem("gold", gold);
+localStorage.setItem("inventory", JSON.stringify(inventory));
+localStorage.setItem("avatar", avatar);
+
+  }
 }
 
 function completeQuest(addXP, addGold, btn) {
@@ -59,6 +69,33 @@ function completeQuest(addXP, addGold, btn) {
 }
 
 function buyItem(name, price) {
+
+  if (gold < price) {
+    alert("Not enough Gold!");
+    return;
+  }
+
+  if (inventory.includes(name)) {
+    alert("Already Owned!");
+    return;
+  }
+
+  gold -= price;
+  inventory.push(name);
+
+  // Change avatar after buying
+  if(name === "Knight Armor"){
+    avatar = "assets/avatars/knight.svg";
+}
+
+if(name === "Dragon Skin"){
+    avatar = "assets/avatars/dragon.svg";
+}
+
+  alert(name + " Purchased!");
+
+  updateUI();
+} {
 
   if (gold < price) {
     alert("Not enough Gold!");
