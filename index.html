@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quest Life</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>⚔ QUEST LIFE ⚔</h1>
+
+<div class="stats">
+
+<div class="card">
+<h2>⭐ Level</h2>
+<h1 id="level">1</h1>
+</div>
+
+<div class="card">
+<h2>XP</h2>
+
+<div class="xpBar">
+<div id="xpFill"></div>
+</div>
+
+<p id="xpText">0 / 100 XP</p>
+
+</div>
+
+<div class="card">
+<h2>💰 Gold</h2>
+<h1 id="gold">0</h1>
+</div>
+
+</div>
+
+<div class="avatar">
+
+<h2>Your Hero</h2>
+
+<img id="avatar"
+src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png">
+
+<p id="title">
+Novice Adventurer
+</p>
+
+</div>
+
+<div class="quests">
+
+<h2>Today's Quests</h2>
+
+<div class="quest">
+<span>💧 Drink Water</span>
+<button onclick="completeQuest(20,10,this)">
++20 XP
+</button>
+</div>
+
+<div class="quest">
+<span>📖 Read 20 Pages</span>
+<button onclick="completeQuest(50,25,this)">
++50 XP
+</button>
+</div>
+
+<div class="quest">
+<span>💪 Workout</span>
+<button onclick="completeQuest(80,40,this)">
++80 XP
+</button>
+</div>
+
+<div class="quest">
+<span>💻 Study 2 Hours</span>
+<button onclick="completeQuest(120,70,this)">
++120 XP
+</button>
+</div>
+
+</div>
+
+<div class="menu">
+
+<button onclick="openShop()">
+🛒 Shop
+</button>
+
+<button onclick="openInventory()">
+🎒 Inventory
+</button>
+
+<button onclick="resetGame()">
+🔄 Reset
+</button>
+
+</div>
+
+<div id="shop" class="popup">
+
+<h2>Shop</h2>
+
+<button onclick="buyItem('Knight Armor',200)">
+Knight Armor (200 Gold)
+</button>
+
+<button onclick="buyItem('Samurai',500)">
+Samurai Outfit (500 Gold)
+</button>
+
+<button onclick="buyItem('Dragon',1000)">
+Dragon Skin (1000 Gold)
+</button>
+
+<button onclick="closeShop()">Close</button>
+
+</div>
+
+<div id="inventory" class="popup">
+
+<h2>Inventory</h2>
+
+<ul id="items">
+
+</ul>
+
+<button onclick="closeInventory()">
+Close
+</button>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
