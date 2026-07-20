@@ -512,28 +512,21 @@ function completeCustom(index,button){
 
 
 function claimReward(){
+function claimReward(){
 
     let today = new Date().toDateString();
 
-    let claimed = localStorage.getItem("dailyReward");
+    let lastClaim = localStorage.getItem("rewardDate");
 
 
-    if(claimed === today){
+    if(lastClaim === today){
 
         document.getElementById("rewardText").innerText =
-        "🎁 Already claimed today! Come back tomorrow.";
-
-        let button = document.querySelector(".reward button");
-
-        if(button){
-            button.disabled = true;
-            button.innerText = "✔ Claimed";
-        }
+        "🎁 Already claimed today!";
 
         return;
 
     }
-
 
 
     let rewards = [
@@ -551,7 +544,7 @@ function claimReward(){
         },
 
         {
-            text:"🎒 Rare Item Found",
+            text:"🎒 Rare Reward Found",
             xp:50,
             gold:100
         }
@@ -559,40 +552,34 @@ function claimReward(){
     ];
 
 
-
     let reward =
     rewards[Math.floor(Math.random()*rewards.length)];
 
 
-
-    addXP(reward.xp);
+    xp += reward.xp;
 
     gold += reward.gold;
 
+
+    while(xp >= level * 100){
+
+        xp -= level * 100;
+
+        level++;
+
+        alert("🎉 Level Up! Level " + level);
+
+    }
 
 
     document.getElementById("rewardText").innerText =
     reward.text;
 
 
-
     localStorage.setItem(
-        "dailyReward",
+        "rewardDate",
         today
     );
-
-
-
-    let button = document.querySelector(".reward button");
-
-    if(button){
-
-        button.disabled = true;
-
-        button.innerText = "✔ Claimed";
-
-    }
-
 
 
     updateUI();
