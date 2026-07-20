@@ -215,3 +215,32 @@ font-weight:bold;
 cursor:pointer;
 
 }
+
+.reward{
+
+background:#1e1e1e;
+padding:20px;
+border-radius:15px;
+text-align:center;
+margin-top:20px;
+
+}
+
+.reward button{
+
+background:#ff9800;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+
+}
+
+#rewardText{
+
+margin-top:15px;
+color:#ffd54f;
+
+}
