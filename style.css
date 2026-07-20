@@ -244,3 +244,29 @@ margin-top:15px;
 color:#ffd54f;
 
 }
+
+.shopCard{
+
+background:#333;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+text-align:center;
+
+}
+
+.shopCard img{
+
+width:80px;
+height:80px;
+border-radius:50%;
+border:3px solid gold;
+background:white;
+
+}
+
+.shopCard button{
+
+margin-top:10px;
+
+}
