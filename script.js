@@ -513,7 +513,30 @@ function completeCustom(index,button){
 
 function claimReward(){
 
-    let rewards=[
+    let today = new Date().toDateString();
+
+    let claimed = localStorage.getItem("dailyReward");
+
+
+    if(claimed === today){
+
+        document.getElementById("rewardText").innerText =
+        "🎁 Already claimed today! Come back tomorrow.";
+
+        let button = document.querySelector(".reward button");
+
+        if(button){
+            button.disabled = true;
+            button.innerText = "✔ Claimed";
+        }
+
+        return;
+
+    }
+
+
+
+    let rewards = [
 
         {
             text:"⭐ +100 XP",
@@ -525,31 +548,56 @@ function claimReward(){
             text:"💰 +200 Gold",
             xp:0,
             gold:200
+        },
+
+        {
+            text:"🎒 Rare Item Found",
+            xp:50,
+            gold:100
         }
 
     ];
 
 
-    let reward=
+
+    let reward =
     rewards[Math.floor(Math.random()*rewards.length)];
+
 
 
     addXP(reward.xp);
 
-    gold+=reward.gold;
+    gold += reward.gold;
+
 
 
     document.getElementById("rewardText").innerText =
     reward.text;
 
 
+
+    localStorage.setItem(
+        "dailyReward",
+        today
+    );
+
+
+
+    let button = document.querySelector(".reward button");
+
+    if(button){
+
+        button.disabled = true;
+
+        button.innerText = "✔ Claimed";
+
+    }
+
+
+
     updateUI();
 
 }
-
-
-
-
 // ---------- RESET ----------
 
 
