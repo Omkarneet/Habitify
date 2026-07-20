@@ -1,3 +1,5 @@
+alert("Quest Life JS Loaded");
+
 ```javascript
 // ===============================
 // QUEST LIFE - GAME SCRIPT
