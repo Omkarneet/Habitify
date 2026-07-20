@@ -1,3 +1,11 @@
+let streak = Number(localStorage.getItem("streak")) || 0;
+
+let lastLogin =
+localStorage.getItem("lastLogin") || "";
+
+let customQuests =
+JSON.parse(localStorage.getItem("quests")) || [];
+
 let avatar = localStorage.getItem("avatar") || 
 "assets/avatars/hero.svg";
 let level = Number(localStorage.getItem("level")) || 1;
@@ -164,3 +172,157 @@ function resetGame() {
 }
 
 updateUI();
+
+function addQuest(){
+
+let name =
+document.getElementById("questName").value;
+
+let xpReward =
+Number(document.getElementById("questXP").value);
+
+let goldReward =
+Number(document.getElementById("questGold").value);
+
+
+if(!name || !xpReward){
+alert("Fill quest details!");
+return;
+}
+
+
+customQuests.push({
+
+name:name,
+xp:xpReward,
+gold:goldReward,
+done:false
+
+});
+
+
+localStorage.setItem(
+"quests",
+JSON.stringify(customQuests)
+);
+
+
+displayQuests();
+
+}
+function displayQuests(){
+
+let box =
+document.getElementById("customQuests");
+
+
+box.innerHTML="";
+
+
+customQuests.forEach((q,index)=>{
+
+
+let div=document.createElement("div");
+
+div.className="quest";
+
+
+div.innerHTML=`
+
+<span>
+${q.name}
+<br>
+⭐ ${q.xp} XP
+💰 ${q.gold} Gold
+</span>
+
+<button onclick="completeCustom(${index},this)">
+Complete
+</button>
+
+`;
+
+
+box.appendChild(div);
+
+
+});
+
+}
+function completeCustom(index,button){
+
+let q=customQuests[index];
+
+
+if(q.done)return;
+
+
+q.done=true;
+
+xp += q.xp;
+
+gold += q.gold;
+
+
+button.disabled=true;
+button.innerHTML="✔ Done";
+
+
+updateUI();
+
+
+localStorage.setItem(
+"quests",
+JSON.stringify(customQuests)
+);
+
+
+}
+displayQuests();
+function checkStreak(){
+
+let today =
+new Date().toDateString();
+
+
+if(lastLogin !== today){
+
+
+let yesterday =
+new Date();
+
+yesterday.setDate(
+yesterday.getDate()-1
+);
+
+
+if(lastLogin === yesterday.toDateString()){
+
+streak++;
+
+}
+else{
+
+streak = 1;
+
+}
+
+
+lastLogin = today;
+
+
+localStorage.setItem(
+"streak",
+streak
+);
+
+
+localStorage.setItem(
+"lastLogin",
+lastLogin
+);
+
+
+}
+
+}
