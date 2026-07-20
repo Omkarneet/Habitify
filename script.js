@@ -1,272 +1,235 @@
-alert("Quest Life JS Loaded");
-
-
 // ===============================
-// QUEST LIFE - GAME SCRIPT
+// QUEST LIFE SCRIPT
 // ===============================
 
 
-// ---------- ASSETS / SHOP DATABASE ----------
+// ---------- ASSETS ----------
 
 const SHOP_ITEMS = [
-
-{
-id:"hero",
-name:"Hero",
-price:0,
-image:"assets/avatars/hero.svg"
-},
-
-{
-id:"knight",
-name:"Knight Armor",
-price:200,
-image:"assets/avatars/knight.svg"
-},
-
-{
-id:"dragon",
-name:"Dragon Skin",
-price:1000,
-image:"assets/avatars/dragon.svg"
-}
-
+    {
+        id: "hero",
+        name: "Hero",
+        price: 0,
+        image: "assets/avatars/hero.svg"
+    },
+    {
+        id: "knight",
+        name: "Knight Armor",
+        price: 200,
+        image: "assets/avatars/knight.svg"
+    },
+    {
+        id: "dragon",
+        name: "Dragon Skin",
+        price: 1000,
+        image: "assets/avatars/dragon.svg"
+    }
 ];
 
 
 // ---------- PLAYER DATA ----------
 
+let level = Number(localStorage.getItem("level")) || 1;
+
+let xp = Number(localStorage.getItem("xp")) || 0;
+
+let gold = Number(localStorage.getItem("gold")) || 0;
+
 let streak = Number(localStorage.getItem("streak")) || 0;
 
-let lastLogin =
-localStorage.getItem("lastLogin") || "";
+let lastLogin = localStorage.getItem("lastLogin") || "";
+
+let avatar = localStorage.getItem("avatar") || "assets/avatars/hero.svg";
+
+let inventory = JSON.parse(localStorage.getItem("inventory")) || ["hero"];
 
 let customQuests =
 JSON.parse(localStorage.getItem("quests")) || [];
 
-let level =
-Number(localStorage.getItem("level")) || 1;
-
-let xp =
-Number(localStorage.getItem("xp")) || 0;
-
-let gold =
-Number(localStorage.getItem("gold")) || 0;
-
-
-// inventory stores item IDs
-
-let inventory =
-JSON.parse(localStorage.getItem("inventory")) || ["hero"];
-
-
-let avatar =
-localStorage.getItem("avatar") ||
-"assets/avatars/hero.svg";
-
 
 const titles = [
-"Novice Adventurer",
-"Explorer",
-"Warrior",
-"Knight",
-"Champion",
-"Legend"
+    "Novice Adventurer",
+    "Explorer",
+    "Warrior",
+    "Knight",
+    "Champion",
+    "Legend"
 ];
 
 
 // ---------- SAVE ----------
 
-
 function saveGame(){
 
-localStorage.setItem("level",level);
-
-localStorage.setItem("xp",xp);
-
-localStorage.setItem("gold",gold);
-
-localStorage.setItem(
-"inventory",
-JSON.stringify(inventory)
-);
-
-localStorage.setItem(
-"avatar",
-avatar
-);
-
-localStorage.setItem(
-"streak",
-streak
-);
-
+    localStorage.setItem("level", level);
+    localStorage.setItem("xp", xp);
+    localStorage.setItem("gold", gold);
+    localStorage.setItem("streak", streak);
+    localStorage.setItem("avatar", avatar);
+    localStorage.setItem("inventory", JSON.stringify(inventory));
 }
 
 
-// ---------- XP SYSTEM ----------
-
-
-function addXP(amount){
-
-xp += amount;
-
-
-while(xp >= level*100){
-
-xp -= level*100;
-
-level++;
-
-alert(
-"🎉 Level Up! Level "+level
-);
-
-}
-
-}
-
-
-// ---------- UI UPDATE ----------
-
+// ---------- UPDATE UI ----------
 
 function updateUI(){
 
-document.getElementById("level")
-.innerText=level;
+    document.getElementById("level").innerText = level;
+
+    document.getElementById("gold").innerText = gold;
+
+    document.getElementById("streak").innerText = streak;
+
+    document.getElementById("avatar").src = avatar;
 
 
-document.getElementById("gold")
-.innerText=gold;
+    let requiredXP = level * 100;
 
 
-document.getElementById("streak")
-.innerText=streak;
+    document.getElementById("xpText").innerText =
+    xp + " / " + requiredXP + " XP";
 
 
-document.getElementById("avatar")
-.src=avatar;
+    document.getElementById("xpFill").style.width =
+    (xp / requiredXP) * 100 + "%";
 
 
-
-let need=level*100;
-
-
-document.getElementById("xpText")
-.innerText=
-xp+" / "+need+" XP";
+    document.getElementById("title").innerText =
+    titles[Math.min(level-1,titles.length-1)];
 
 
-document.getElementById("xpFill")
-.style.width=
-(xp/need)*100+"%";
+    loadInventory();
 
-
-
-document.getElementById("title")
-.innerText=
-titles[
-Math.min(level-1,titles.length-1)
-];
-
-
-
-loadInventory();
-
-saveGame();
+    saveGame();
 
 }
 
 
-// ---------- QUEST SYSTEM ----------
+// ---------- XP ----------
+
+function addXP(amount){
+
+    xp += amount;
 
 
-function completeQuest(addXPAmount,addGoldAmount,btn){
+    while(xp >= level * 100){
 
+        xp -= level * 100;
 
-if(btn.disabled)return;
+        level++;
 
+        alert("🎉 Level Up! Level " + level);
 
-addXP(addXPAmount);
-
-gold+=addGoldAmount;
-
-
-btn.disabled=true;
-
-btn.innerHTML="✔ Completed";
-
-
-updateUI();
+    }
 
 }
+
+
+
+// ---------- QUESTS ----------
+
+
+function completeQuest(addXP, addGold, button){
+
+    if(button.disabled)
+    return;
+
+
+    addXPFunction(addXP);
+
+    gold += addGold;
+
+
+    button.disabled = true;
+
+    button.innerHTML = "✔ Completed";
+
+
+    updateUI();
+
+}
+
+
+
+function addXPFunction(amount){
+
+    addXP(amount);
+
+}
+
 
 
 
 // ---------- SHOP ----------
 
 
+function openShop(){
+
+    renderShop();
+
+    document.getElementById("shop").style.display="block";
+
+}
+
+
+function closeShop(){
+
+    document.getElementById("shop").style.display="none";
+
+}
+
+
+
 function renderShop(){
 
-let shop =
-document.getElementById("shopItems");
+    let box=document.getElementById("shopItems");
 
 
-if(!shop)return;
+    if(!box)
+    return;
 
 
-shop.innerHTML="";
+    box.innerHTML="";
 
 
-SHOP_ITEMS.forEach(item=>{
+    SHOP_ITEMS.forEach(item=>{
 
 
-if(item.id==="hero")
-return;
+        if(item.id==="hero")
+        return;
 
 
-let owned =
-inventory.includes(item.id);
+        let owned=inventory.includes(item.id);
 
 
-
-let div =
-document.createElement("div");
+        let div=document.createElement("div");
 
 
-div.className="shopCard";
+        div.className="shopCard";
 
 
-div.innerHTML=`
+        div.innerHTML=`
 
-<img src="${item.image}">
+        <img src="${item.image}" width="80">
 
-<h3>${item.name}</h3>
+        <h3>${item.name}</h3>
 
-<p>
-💰 ${item.price} Gold
-</p>
+        <p>💰 ${item.price} Gold</p>
 
 
-<button
+        <button onclick="buyItem('${item.id}')">
 
-${owned?"disabled":""}
+        ${owned ? "Owned" : "Buy"}
 
-onclick="buyItem('${item.id}')">
+        </button>
 
-${owned?"Owned":"Buy"}
-
-</button>
-
-`;
+        `;
 
 
+        box.appendChild(div);
 
-shop.appendChild(div);
 
-
-});
-
+    });
 
 }
 
@@ -274,52 +237,41 @@ shop.appendChild(div);
 
 function buyItem(id){
 
-
-let item =
-SHOP_ITEMS.find(
-i=>i.id===id
-);
+    let item=SHOP_ITEMS.find(x=>x.id===id);
 
 
-
-if(!item)return;
-
-
-
-if(gold < item.price){
-
-alert("Not enough Gold!");
-
-return;
-
-}
+    if(!item)
+    return;
 
 
+    if(inventory.includes(id)){
 
-if(inventory.includes(id)){
+        alert("Already Owned!");
 
-alert("Already Owned!");
+        return;
 
-return;
-
-}
-
+    }
 
 
-gold-=item.price;
+    if(gold < item.price){
+
+        alert("Not enough Gold!");
+
+        return;
+
+    }
 
 
-inventory.push(id);
+    gold -= item.price;
 
 
-
-alert(
-item.name+" Purchased!"
-);
+    inventory.push(id);
 
 
-updateUI();
+    alert(item.name+" Purchased!");
 
+
+    updateUI();
 
 }
 
@@ -329,73 +281,71 @@ updateUI();
 // ---------- INVENTORY ----------
 
 
+function openInventory(){
 
-function loadInventory(){
-
-
-let list =
-document.getElementById("items");
-
-
-if(!list)return;
-
-
-list.innerHTML="";
-
-
-
-if(inventory.length===0){
-
-list.innerHTML=
-"<li>No Items</li>";
-
-return;
+    document.getElementById("inventory").style.display="block";
 
 }
 
 
 
-inventory.forEach(id=>{
+function closeInventory(){
 
+    document.getElementById("inventory").style.display="none";
 
-let item =
-SHOP_ITEMS.find(
-i=>i.id===id
-);
-
-
-
-let li =
-document.createElement("li");
+}
 
 
 
-li.innerHTML=`
 
-<img src="${item.image}" width="50">
+function loadInventory(){
 
-<br>
-
-${item.name}
-
-<br>
-
-<button onclick="equipItem('${id}')">
-
-Equip
-
-</button>
-
-`;
+    let list=document.getElementById("items");
 
 
+    if(!list)
+    return;
 
-list.appendChild(li);
+
+    list.innerHTML="";
 
 
+    inventory.forEach(id=>{
 
-});
 
+        let item=SHOP_ITEMS.find(x=>x.id===id);
+
+
+        if(!item)
+        return;
+
+
+        let li=document.createElement("li");
+
+
+        li.innerHTML=`
+
+        <img src="${item.image}" width="50">
+
+        <br>
+
+        ${item.name}
+
+        <br>
+
+        <button onclick="equipItem('${id}')">
+
+        Equip
+
+        </button>
+
+        `;
+
+
+        list.appendChild(li);
+
+
+    });
 
 }
 
@@ -404,128 +354,65 @@ list.appendChild(li);
 
 function equipItem(id){
 
-
-let item =
-SHOP_ITEMS.find(
-i=>i.id===id
-);
+    let item=SHOP_ITEMS.find(x=>x.id===id);
 
 
-
-if(!item)return;
-
-
-avatar=item.image;
+    if(!item)
+    return;
 
 
-updateUI();
+    avatar=item.image;
 
 
-alert(
-item.name+" Equipped!"
-);
+    updateUI();
 
 
 }
 
 
 
-
-// ---------- POPUPS ----------
-
-
-function openShop(){
-
-renderShop();
-
-document.getElementById("shop")
-.style.display="block";
-
-}
-
-
-function closeShop(){
-
-document.getElementById("shop")
-.style.display="none";
-
-}
-
-
-function openInventory(){
-
-document.getElementById("inventory")
-.style.display="block";
-
-}
-
-
-function closeInventory(){
-
-document.getElementById("inventory")
-.style.display="none";
-
-}
-
-
-
-// ---------- CUSTOM QUESTS ----------
-
+// ---------- CUSTOM QUEST ----------
 
 
 function addQuest(){
 
+    let name=document.getElementById("questName").value;
 
-let name =
-document.getElementById("questName").value;
+    let xpReward=Number(document.getElementById("questXP").value);
 
-
-let xpReward =
-Number(
-document.getElementById("questXP").value
-);
-
-
-let goldReward =
-Number(
-document.getElementById("questGold").value
-);
+    let goldReward=Number(document.getElementById("questGold").value);
 
 
 
-if(!name || !xpReward){
+    if(!name || !xpReward){
 
-alert(
-"Fill quest details!"
-);
+        alert("Fill quest details!");
 
-return;
+        return;
 
-}
+    }
 
 
+    customQuests.push({
 
-customQuests.push({
+        name:name,
 
-name:name,
+        xp:xpReward,
 
-xp:xpReward,
+        gold:goldReward,
 
-gold:goldReward,
+        done:false
 
-done:false
-
-});
-
-
-localStorage.setItem(
-"quests",
-JSON.stringify(customQuests)
-);
+    });
 
 
-displayQuests();
+    localStorage.setItem(
+        "quests",
+        JSON.stringify(customQuests)
+    );
 
+
+    displayQuests();
 
 }
 
@@ -534,247 +421,132 @@ displayQuests();
 
 function displayQuests(){
 
-
-let box =
-document.getElementById("customQuests");
+    let box=document.getElementById("customQuests");
 
 
-if(!box)return;
+    if(!box)
+    return;
 
 
-box.innerHTML="";
+    box.innerHTML="";
 
 
-
-customQuests.forEach((q,index)=>{
-
-
-let div =
-document.createElement("div");
+    customQuests.forEach((q,index)=>{
 
 
-div.className="quest";
+        let div=document.createElement("div");
+
+        div.className="quest";
 
 
-div.innerHTML=`
+        div.innerHTML=`
 
-<span>
+        <span>
 
-${q.name}
+        ${q.name}
 
-<br>
+        <br>
 
-⭐ ${q.xp} XP
+        ⭐ ${q.xp} XP
 
-💰 ${q.gold} Gold
+        💰 ${q.gold} Gold
 
-</span>
-
-
-<button onclick="completeCustom(${index},this)">
-
-${q.done?"✔ Done":"Complete"}
-
-</button>
-
-`;
+        </span>
 
 
+        <button onclick="completeCustom(${index},this)">
 
-box.appendChild(div);
+        ${q.done ? "✔ Done" : "Complete"}
+
+        </button>
+
+        `;
 
 
+        box.appendChild(div);
 
-});
 
+    });
 
 }
+
 
 
 
 function completeCustom(index,button){
 
-
-let q =
-customQuests[index];
+    let q=customQuests[index];
 
 
-if(q.done)return;
+    if(q.done)
+    return;
 
 
-
-q.done=true;
-
-
-addXP(q.xp);
+    q.done=true;
 
 
-gold+=q.gold;
+    addXP(q.xp);
+
+    gold+=q.gold;
 
 
-
-localStorage.setItem(
-"quests",
-JSON.stringify(customQuests)
-);
-
+    localStorage.setItem(
+        "quests",
+        JSON.stringify(customQuests)
+    );
 
 
-button.disabled=true;
-
-button.innerHTML="✔ Done";
+    button.disabled=true;
 
 
-updateUI();
+    button.innerHTML="✔ Done";
 
+
+    updateUI();
 
 }
 
 
 
-// ---------- DAILY REWARD ----------
-
+// ---------- REWARD ----------
 
 
 function claimReward(){
 
+    let rewards=[
 
-let today =
-new Date().toDateString();
+        {
+            text:"⭐ +100 XP",
+            xp:100,
+            gold:0
+        },
 
+        {
+            text:"💰 +200 Gold",
+            xp:0,
+            gold:200
+        }
 
-
-let claimed =
-localStorage.getItem("reward");
-
-
-
-if(claimed===today){
-
-document.getElementById("rewardText")
-.innerText=
-"Already claimed today!";
-
-return;
-
-}
+    ];
 
 
-
-let rewards=[
-
-{
-text:"⭐ +100 XP",
-xp:100,
-gold:0
-},
-
-{
-text:"💰 +200 Gold",
-xp:0,
-gold:200
-},
-
-{
-text:"🎒 Rare Reward",
-xp:50,
-gold:100
-}
-
-];
+    let reward=
+    rewards[Math.floor(Math.random()*rewards.length)];
 
 
+    addXP(reward.xp);
 
-let reward =
-rewards[
-Math.floor(
-Math.random()*rewards.length
-)
-];
+    gold+=reward.gold;
 
 
-
-addXP(reward.xp);
-
-
-gold+=reward.gold;
+    document.getElementById("rewardText").innerText =
+    reward.text;
 
 
-
-document.getElementById("rewardText")
-.innerText=
-reward.text;
-
-
-
-localStorage.setItem(
-"reward",
-today
-);
-
-
-
-updateUI();
-
+    updateUI();
 
 }
 
-
-
-// ---------- STREAK ----------
-
-
-function checkStreak(){
-
-
-let today =
-new Date().toDateString();
-
-
-
-if(lastLogin!==today){
-
-
-let yesterday =
-new Date();
-
-
-yesterday.setDate(
-yesterday.getDate()-1
-);
-
-
-
-if(
-lastLogin===
-yesterday.toDateString()
-){
-
-streak++;
-
-}
-
-else{
-
-streak=1;
-
-}
-
-
-
-lastLogin=today;
-
-
-localStorage.setItem(
-"lastLogin",
-lastLogin
-);
-
-
-}
-
-
-}
 
 
 
@@ -783,17 +555,13 @@ lastLogin
 
 function resetGame(){
 
+    if(confirm("Reset Game?")){
 
-if(confirm("Reset Game?")){
+        localStorage.clear();
 
+        location.reload();
 
-localStorage.clear();
-
-location.reload();
-
-
-}
-
+    }
 
 }
 
@@ -802,9 +570,6 @@ location.reload();
 // ---------- START ----------
 
 
-checkStreak();
-
 displayQuests();
 
 updateUI();
-```
