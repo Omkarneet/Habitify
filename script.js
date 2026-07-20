@@ -435,3 +435,75 @@ checkStreak();
 displayQuests();
 
 updateUI();
+
+function claimReward(){
+
+let today =
+new Date().toDateString();
+
+
+let claimed =
+localStorage.getItem("reward");
+
+
+if(claimed===today){
+
+document.getElementById("rewardText").innerText =
+"Already claimed today!";
+
+return;
+
+}
+
+
+
+let rewards=[
+
+{
+text:"⭐ +100 XP",
+xp:100,
+gold:0
+},
+
+{
+text:"💰 +200 Gold",
+xp:0,
+gold:200
+},
+
+{
+text:"🎒 Rare Item Found",
+xp:50,
+gold:100
+}
+
+];
+
+
+
+let reward =
+rewards[Math.floor(Math.random()*rewards.length)];
+
+
+
+xp += reward.xp;
+
+gold += reward.gold;
+
+
+
+document.getElementById("rewardText").innerText =
+reward.text;
+
+
+
+localStorage.setItem(
+"reward",
+today
+);
+
+
+
+updateUI();
+
+}
