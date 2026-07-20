@@ -56,7 +56,21 @@ Novice Adventurer
 <div class="quests">
 
 <h2>Today's Quests</h2>
+<div class="createQuest">
 
+<input id="questName" placeholder="Enter Quest Name">
+
+<input id="questXP" type="number" placeholder="XP">
+
+<input id="questGold" type="number" placeholder="Gold">
+
+<button onclick="addQuest()">
+➕ Add Quest
+</button>
+
+</div>
+
+<div id="customQuests"></div>
 <div class="quest">
 <span>💧 Drink Water</span>
 <button onclick="completeQuest(20,10,this)">
